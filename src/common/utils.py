@@ -1,5 +1,25 @@
 # Databricks notebook source
 def archive_files(source_dir:str, archive_dir:str):
+    """
+    Archives files from a source directory to an archive directory with a timestamped filename.
+
+    This function lists all files in the specified `source_dir`, prepends each filename with the current 
+    UTC timestamp, and moves them to the `archive_dir`.
+
+    Parameters
+    ----------
+    source_dir : str
+        The path to the source directory containing the files to archive (e.g., a DBFS path like 'dbfs:/mnt/source').
+    
+    archive_dir : str
+        The path to the archive directory where the files will be moved (e.g., 'dbfs:/mnt/archive').
+
+    Notes
+    -----
+    - Filenames are prefixed with the current UTC timestamp in the format 'YYYY-MM-DD_HH:MM:SS'.
+    - Uses `dbutils.fs.mv` to move files, which deletes them from the source after the move.
+    - Intended for use in a Databricks environment.
+    """
     from datetime import datetime, timezone
 
     current_utc_time = datetime.now(timezone.utc).strftime( '%Y-%m-%d_%H:%M:%S')
