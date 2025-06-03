@@ -1,22 +1,33 @@
 # Databricks notebook source
-# MAGIC %run ../custom_error
+# MAGIC %run ../custom_errors/custom_error
+
+# COMMAND ----------
+
+# MAGIC %run ../common/config
+
+# COMMAND ----------
+
+config = Config()
+
+# COMMAND ----------
+
+silver_db_external_location = config.get_silver_external_location()
 
 # COMMAND ----------
 
 from typing import Optional
 
 class SilverSetup:
-    def __init__(self, env:Optional[str] = None, db_name:str = 'silver'):
-        self.env = env
-        self.db_name = f'{self.env + "." if self.env else ""}' + db_name
+    def __init__(self,  db_name:str = 'silver', db_location:str = silver_db_external_location):
+        self.db_location = db_location
+        self.db_name = db_name
         self.is_db_created = False
         
 
     def create_database(self):
-        # Dynamically create a database name with an optional environment prefix,
-        # and create the corresponding database (namespace) if it does not exist
-        spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.db_name}")
-        self.is_db_created = True  
+        spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.db_name} MANAGED LOCATION '{self.db_location}'")
+        spark.sql(f"USE {self.db_name}")
+        self.is_db_created = True
 
     def create_silver_customers_table(self, table_name = 'customers_si'):
         customers_schema = """
@@ -33,9 +44,9 @@ class SilverSetup:
                             days_since_registration INT,
                             last_updated TIMESTAMP
                            """
-        # Databricks Runtime 14.2 and above
+        # Databricks Runtime 15.4 LTS
         if self.is_db_created:
-            spark.sql(f"create table if not exists {self.db_name}.{table_name} ({customers_schema}) CLUSTER BY (customer_id, last_updated ) TBLPROPERTIES (delta.enableChangeDataFeed = true)")
+            spark.sql(f"create table if not exists {self.db_name}.{table_name} ({customers_schema}) CLUSTER BY AUTO TBLPROPERTIES (delta.enableChangeDataFeed = true)")
         else:
             raise DatabaseNotCreatedError('silver')
 
@@ -58,7 +69,7 @@ class SilverSetup:
                         
         # Databricks Runtime 14.2 and above
         if self.is_db_created:
-            spark.sql(f"create table if not exists {self.db_name}.{table_name} ({product_schema}) CLUSTER BY (product_id, last_updated ) TBLPROPERTIES (delta.enableChangeDataFeed = true)")
+            spark.sql(f"create table if not exists {self.db_name}.{table_name} ({product_schema}) CLUSTER BY AUTO TBLPROPERTIES (delta.enableChangeDataFeed = true)")
         else:
             raise DatabaseNotCreatedError('silver')
 
@@ -80,7 +91,7 @@ class SilverSetup:
                         
         # Databricks Runtime 14.2 and above
         if self.is_db_created:
-            spark.sql(f"create table if not exists {self.db_name}.{table_name} ({transactions_schema}) CLUSTER BY (transaction_id, transaction_date, customer_id, product_id ) TBLPROPERTIES (delta.enableChangeDataFeed = true)")
+            spark.sql(f"create table if not exists {self.db_name}.{table_name} ({transactions_schema}) CLUSTER BY AUTO TBLPROPERTIES (delta.enableChangeDataFeed = true)")
         else:
             raise DatabaseNotCreatedError('silver')
 

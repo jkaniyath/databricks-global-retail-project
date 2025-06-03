@@ -25,14 +25,13 @@ transactions_landing = config.get_transactions_landing_external_location()
 
 
 class BronzeIngestion:
-    def __init__(self,db_name:str = 'bronze', env:str = 'dev' ):
-        self.env = env 
+    def __init__(self,db_name:str = 'bronze'):
         self.db_name = db_name
 
     def load_to_bronze_customers(self, source_dir:str, table_name:str, archive_dir:str):
         from pyspark.sql.functions import current_timestamp
 
-        full_table_name = f'{self.env}.{self.db_name}.{table_name}'
+        full_table_name = f'`{self.db_name}`.`{table_name}`'
 
         customers_schema = """
                             customer_id INT,
@@ -62,7 +61,7 @@ class BronzeIngestion:
     def load_to_bronze_products(self, source_dir:str, table_name:str, archive_dir:str):
         from pyspark.sql.functions import current_timestamp
 
-        full_table_name = f'{self.env}.{self.db_name}.{table_name}'
+        full_table_name = f'`{self.db_name}`.`{table_name}`'
         
         product_schema = """
                     brand STRING,
@@ -89,7 +88,7 @@ class BronzeIngestion:
     def load_to_bronze_transactions(self, source_dir:str, table_name:str, archive_dir:str):
         from pyspark.sql.functions import current_timestamp
 
-        full_table_name = f'{self.env}.{self.db_name}.{table_name}'
+        full_table_name = f'`{self.db_name}`.`{table_name}`'
 
         transaction_schema = """
                         transaction_id STRING,

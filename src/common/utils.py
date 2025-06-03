@@ -116,24 +116,6 @@ def remove_duplicate_rows(source_df:DataFrame, target_df:DataFrame, meta_columns
 
 # COMMAND ----------
 
-from delta.tables import DeltaTable
-
-def get_latest_table_version(table_name:str) -> int:
-    table_path = spark.sql(f"DESCRIBE DETAIL {table_name} ").select("location").first()["location"]
-    deltaTable = DeltaTable.forPath(spark, table_path)
-
-    history_df = deltaTable.history() \
-    .select("version") \
-    .orderBy("version", ascending=False)
-
-    version = history_df.collect()[0][0]
-
-    return version
-
-
-
-# COMMAND ----------
-
 from datetime import datetime
 
 def get_last_commit_time(table_name:str)-> datetime:

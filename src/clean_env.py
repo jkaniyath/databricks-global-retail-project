@@ -47,9 +47,23 @@ for file_info in files:
 
 # COMMAND ----------
 
-files
+# MAGIC %sql
+# MAGIC select  * from dev.silver.products_si
+# MAGIC where product_id = 1
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC select * from dev.bronze.products_bz
+# MAGIC select  * from dev.silver.products_si
+# MAGIC where product_id = 1
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select  * from dev.silver.products_si
+# MAGIC where product_id = 3
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from dev.gold.sales_summary_gd

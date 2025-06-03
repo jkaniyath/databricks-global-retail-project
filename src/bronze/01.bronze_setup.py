@@ -26,8 +26,8 @@ class BronzeSetup:
         
 
     def create_database(self):
-        spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.env}.{self.db_name} MANAGED LOCATION '{self.db_location}'")
-        spark.sql(f"USE {self.env}.{self.db_name}")
+        spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.db_name} MANAGED LOCATION '{self.db_location}'")
+        spark.sql(f"USE {self.db_name}")
         self.is_db_created = True
     
 

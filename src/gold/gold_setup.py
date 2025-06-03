@@ -1,5 +1,17 @@
 # Databricks notebook source
-# MAGIC %run ../custom_error
+# MAGIC %run ../custom_errors/custom_error
+
+# COMMAND ----------
+
+# MAGIC %run ../common/config
+
+# COMMAND ----------
+
+config = Config()
+
+# COMMAND ----------
+
+gold_db_external_location = config.get_gold_external_location()
 
 # COMMAND ----------
 
@@ -7,15 +19,14 @@
 from typing import Optional
 
 class GoldSetup:
-    def __init__(self, env:Optional[str] = None, db_name:str = 'gold'):
-        self.env = env
-        self.db_name = f'{self.env + "." if self.env else ""}' + db_name
+    def __init__(self,  db_name:str = 'gold', db_location:str = gold_db_external_location):
+        self.db_location = db_location
+        self.db_name = db_name
         self.is_db_created = False
 
     def create_database(self):
-        # Dynamically create a database name with an optional environment prefix,
-        # and create the corresponding database (namespace) if it does not exist
-        spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.db_name}")
+        spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.db_name} MANAGED LOCATION '{self.db_location}'")
+        spark.sql(f"USE {self.db_name}")
         self.is_db_created = True
 
     def create_gold_sales_summary_table(self, table_name:str = 'sales_summary_gd'):

@@ -1,19 +1,25 @@
 # Databricks notebook source
-# MAGIC %run ../utils
+# MAGIC %run ../common/utils
 
 # COMMAND ----------
 
-from typing import Optional
+# MAGIC %run ../common/config
+
+# COMMAND ----------
+
+config = Config()
+
+# COMMAND ----------
+
 
 class SilverIngestion:
-    def __init__(self,db_name:str = 'silver', env:Optional[str] = None ):
-        self.env = env 
+    def __init__(self,db_name:str = 'silver' ):
         self.db_name = db_name
 
     def load_to_silver_customers(self, bronze_table_name:str = 'bronze.customers_bz', silver_table_name:str='customers_si'):
         from pyspark.sql.functions import current_timestamp, col, when, current_date, datediff, lit, trim, lower
 
-        full_silver_table_name = f'{self.env + "." if self.env else ""}' + self.db_name + '.' + silver_table_name
+        full_silver_table_name = f'`{self.db_name}`.`{silver_table_name}`'
 
         # Impliment Incremental loading
         last_processed_timestamp = get_last_processed_timestamp(table_name=full_silver_table_name)
@@ -54,7 +60,7 @@ class SilverIngestion:
     def load_to_silver_products(self, bronze_table_name:str = 'bronze.products_bz', silver_table_name:str='products_si'):
         from pyspark.sql.functions import current_timestamp, col, when, current_date, datediff, lit, trim, lower
 
-        full_silver_table_name = f'{self.env + "." if self.env else ""}' + self.db_name + '.' + silver_table_name
+        full_silver_table_name = f'`{self.db_name}`.`{silver_table_name}`'
 
         # Impliment Incremental loading
         last_processed_timestamp = get_last_processed_timestamp(table_name='silver.products_si')
@@ -113,7 +119,7 @@ class SilverIngestion:
     def load_to_silver_transactions(self, bronze_table_name:str = 'bronze.transactions_bz', silver_table_name:str='transactions_si'):
         from pyspark.sql.functions import current_timestamp, col, when, to_date, lit
 
-        full_silver_table_name = f'{self.env + "." if self.env else ""}' + self.db_name + '.' + silver_table_name
+        full_silver_table_name =  f'`{self.db_name}`.`{silver_table_name}`'
 
         # Impliment Incremental loading
         last_processed_timestamp = get_last_processed_timestamp(table_name='silver.transactions_si')

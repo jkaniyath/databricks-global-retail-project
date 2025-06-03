@@ -1,19 +1,25 @@
 # Databricks notebook source
-# MAGIC %run ../utils
+# MAGIC %run ../common/utils
 
 # COMMAND ----------
 
-from typing import Optional
+# MAGIC %run ../common/config
+
+# COMMAND ----------
+
+config = Config()
+
+# COMMAND ----------
+
 
 class GoldIngestion:
-    def __init__(self,db_name:str = 'gold', env:Optional[str] = None ):
-        self.env = env 
+    def __init__(self,db_name:str = 'gold'):
         self.db_name = db_name
     
-    def load_to_gold_sales_summary(self, target_table_name:str='sales_summary_gd'):
+    def load_to_gold_sales_summary(self, source_table = 'silver.transactions_si',  target_table_name:str='sales_summary_gd'):
         from pyspark.sql.functions import sum, avg, col, round, count, lit , current_timestamp, max
 
-        full_target_table_name = f'{self.env + "." if self.env else ""}' + self.db_name + '.' + target_table_name
+        full_target_table_name =  f'`{self.db_name}`.`{target_table_name}`'
 
 
         last_commit_time = get_last_commit_time('sales_summary_gd')
@@ -21,7 +27,7 @@ class GoldIngestion:
         raw_transactions_df = spark.read.format('delta') \
                                 .option('readChangeFeed', True) \
                                 .option('startingVersion', 0) \
-                                .table('silver.transactions_si') \
+                                .table(source_table) \
                                 .filter(col('_change_type').isin(['insert', 'update_postimage'])) \
                                 .filter(col('_commit_timestamp') > last_commit_time)
     
@@ -60,11 +66,11 @@ class GoldIngestion:
                             where table_name = 'sales_summary_gd'
                             """)
         
-    def load_to_gold_customers_stats(self, target_table_name:str='customer_stats_gd'):
+    def load_to_gold_customers_stats(self, target_table_name:str='customers_stats_gd'):
 
         from pyspark.sql.functions import broadcast, datediff, col, min, max, avg, sum , count, countDistinct, round , current_timestamp, current_date
 
-        full_target_table_name = f'{self.env + "." if self.env else ""}' + self.db_name + '.' + target_table_name
+        full_target_table_name =  f'`{self.db_name}`.`{target_table_name}`'
 
         last_commit_time = get_last_commit_time('customers_stats_gd')
 
@@ -98,7 +104,7 @@ class GoldIngestion:
 
             
 
-            spark.sql(f""" MERGE INTO gold.customers_stats_gd as target
+            spark.sql(f""" MERGE INTO {full_target_table_name} as target
                             USING customers_stats_view as source
                             on target.customer_id = source.customer_id 
                             WHEN MATCHED THEN
@@ -139,7 +145,7 @@ class GoldIngestion:
 
         from pyspark.sql.functions import broadcast, datediff, col, min, max, avg, sum , count, round , current_timestamp
 
-        full_target_table_name = f'{self.env + "." if self.env else ""}' + self.db_name + '.' + target_table_name
+        full_target_table_name =  f'`{self.db_name}`.`{target_table_name}`'
 
         last_commit_time = get_last_commit_time('product_sales_summary_gd')
 
