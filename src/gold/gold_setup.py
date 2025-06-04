@@ -93,8 +93,4 @@ class GoldSetup:
 
 # COMMAND ----------
 
-gold_setup = GoldSetup()
 
-# COMMAND ----------
-
-gold_setup.start_gold_setup()

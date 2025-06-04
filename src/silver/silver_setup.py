@@ -126,8 +126,4 @@ class SilverSetup:
 
 # COMMAND ----------
 
-silver_setup = SilverSetup()
 
-# COMMAND ----------
-
-silver_setup.start_silver_setup()

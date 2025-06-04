@@ -18,8 +18,7 @@ bronze_location_db_external_location = config.get_bronze_external_location()
 
 
 class BronzeSetup:
-    def __init__(self, env:str = 'dev', db_name:str = 'bronze', db_location:str = bronze_location_db_external_location):
-        self.env = env
+    def __init__(self,  db_name:str = 'bronze', db_location:str = bronze_location_db_external_location):
         self.db_location = db_location
         self.db_name = db_name
         self.is_db_created = False
@@ -88,14 +87,6 @@ class BronzeSetup:
         self.create_bronze_products_table()
         self.create_bronze_transactions_table()
 
-
-# COMMAND ----------
-
-bronze_setup = BronzeSetup()
-
-# COMMAND ----------
-
-bronze_setup.start_bronze_setup()
 
 # COMMAND ----------
 

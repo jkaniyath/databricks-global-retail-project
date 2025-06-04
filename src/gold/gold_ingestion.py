@@ -200,20 +200,20 @@ class GoldIngestion:
 
 # COMMAND ----------
 
-gold_ingestion = GoldIngestion()
-
-# COMMAND ----------
-
-gold_ingestion.load_to_gold_customers_stats()
 
 
 # COMMAND ----------
 
-gold_ingestion.load_to_gold_sales_summary()
+
+
 
 # COMMAND ----------
 
-gold_ingestion.load_to_gold_product_sales_summary()
+
+
+# COMMAND ----------
+
+
 
 
 # COMMAND ----------

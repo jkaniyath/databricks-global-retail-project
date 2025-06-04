@@ -159,21 +159,3 @@ class SilverIngestion:
                     INSERT * """)
 
 
-
-# COMMAND ----------
-
-silver_ingestion = SilverIngestion()
-
-# COMMAND ----------
-
-silver_ingestion.load_to_silver_customers()
-
-# COMMAND ----------
-
-silver_ingestion.load_to_silver_products()
-
-
-# COMMAND ----------
-
-silver_ingestion.load_to_silver_transactions()
-

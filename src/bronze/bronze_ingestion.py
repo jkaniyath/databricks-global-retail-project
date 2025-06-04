@@ -111,30 +111,3 @@ class BronzeIngestion:
 
         archive_files(source_dir, archive_dir)
                         
-
-# COMMAND ----------
-
-bronze_ingestion = BronzeIngestion()
-
-# COMMAND ----------
-
-bronze_ingestion.load_to_bronze_customers(source_dir=customers_landing, 
-                                          archive_dir=customers_archive,
-                                          table_name = 'customers_bz')
-
-# COMMAND ----------
-
-bronze_ingestion.load_to_bronze_products(source_dir= products_landing, 
-                                          archive_dir = products_archive,
-                                          table_name = 'products_bz')
-
-# COMMAND ----------
-
-
-bronze_ingestion.load_to_bronze_transactions(source_dir = transactions_landing, 
-                                          archive_dir = transactions_archive,
-                                          table_name = 'transactions_bz')
-
-# COMMAND ----------
-
-
